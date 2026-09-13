@@ -94,58 +94,6 @@ body {
     box-shadow: 0 4px 15px rgba(139, 233, 253, 0.2);
 }
 
-
-/* Audio Settings */
-.audio-settings {
-    position: absolute;
-    top: 88px;
-    right: 28px;
-    width: 330px;
-    padding: 18px 20px;
-    background: rgba(20, 14, 34, 0.97);
-    border: 2px solid rgba(255, 204, 0, 0.55);
-    border-radius: 16px;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
-    z-index: 100;
-    backdrop-filter: blur(12px);
-}
-
-.audio-settings-title {
-    color: #ffcc00;
-    font-size: 0.78rem;
-    font-weight: 900;
-    letter-spacing: 2px;
-    text-align: center;
-    margin-bottom: 14px;
-}
-
-.audio-setting-row {
-    display: grid;
-    grid-template-columns: 1fr 105px 42px;
-    align-items: center;
-    gap: 10px;
-    margin: 12px 0;
-}
-
-.audio-setting-row label {
-    color: #f8f8f2;
-    font-size: 0.82rem;
-    font-weight: 700;
-}
-
-.audio-setting-row input[type="range"] {
-    width: 105px;
-    accent-color: #ffcc00;
-    cursor: pointer;
-}
-
-.audio-setting-row span {
-    color: #ffcc00;
-    font-size: 0.78rem;
-    font-weight: 800;
-    text-align: right;
-}
-
 /* Hero Panel (Active song details above carousel) */
 .song-hero {
     text-align: center;
@@ -630,4 +578,73 @@ kbd {
 .loading-text {
     font-size: 1rem;
     color: #6272a4;
+}
+
+/* === Audio Settings === */
+.audio-settings-dialog {
+    background: linear-gradient(145deg, #221833 0%, #150f22 100%);
+    border: 3px solid #ffcc00;
+    box-shadow: 0 0 50px rgba(255, 204, 0, 0.35), 0 25px 60px rgba(0, 0, 0, 0.8);
+    border-radius: 24px;
+    padding: 32px 40px;
+    max-width: 720px;
+    width: min(90vw, 720px);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.audio-settings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 8px 4px;
+}
+
+.audio-setting-row {
+    display: grid;
+    grid-template-columns: 190px minmax(180px, 1fr) 55px;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    cursor: pointer;
+}
+
+.audio-setting-name {
+    text-align: left;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.audio-setting-row input[type="range"] {
+    width: 100%;
+    accent-color: #ffcc00;
+    cursor: pointer;
+}
+
+.audio-setting-value {
+    color: #ffcc00;
+    font-weight: 800;
+    text-align: right;
+}
+
+.audio-settings-close {
+    border: 1px solid rgba(139, 233, 253, 0.3);
+    font-family: inherit;
+}
+
+@media (max-width: 650px) {
+    .audio-setting-row {
+        grid-template-columns: 1fr 55px;
+    }
+
+    .audio-setting-row input[type="range"] {
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
 }
