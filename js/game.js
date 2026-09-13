@@ -169,7 +169,7 @@ class Game {
     async start() {
         this._updateLayout();
         this.audio = new Audio(this.audioUrl);
-        this.audio.volume = Math.max(0, Math.min(1, this.options.volume ?? 0.7));
+        this.audio.volume = Number.isFinite(this.options.songVolume) ? Math.max(0, Math.min(1, this.options.songVolume)) : 0.4;
 
         await new Promise((resolve, reject) => {
             this.audio.addEventListener('canplaythrough', resolve, { once: true });
@@ -3928,8 +3928,7 @@ class Game {
             duration: 2600
         };
 
-        // Use the supplied authentic announcer WAV instead of speechSynthesis.
-        // This gives the announcer its own Web Audio volume control.
+        // Use the supplied authentic combo WAV instead of speechSynthesis.
         if (window.soundManager) {
             window.soundManager.playCombo(combo);
         }
