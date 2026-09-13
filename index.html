@@ -14,6 +14,7 @@
             <h1 class="app-title">🥁 TJA Player</h1>
             <p class="app-subtitle">Cycle songs with <kbd>D</kbd> / <kbd>K</kbd> • Press <kbd>F</kbd> / <kbd>J</kbd> to Select</p>
             <div class="header-actions">
+                <button class="btn-folder" id="btn-audio-settings" type="button">⚙️ Audio Settings</button>
                 <button class="btn-folder" id="btn-refresh" title="Rescan songs directory for new entries">
                     🔄 Refresh Songs
                 </button>
@@ -21,31 +22,6 @@
                     📁 Open Local Song Folder
                     <input type="file" id="folder-input" webkitdirectory directory multiple style="display:none;">
                 </label>
-                <button class="btn-folder" id="btn-settings" title="Audio settings">
-                    ⚙️ Audio Settings
-                </button>
-            </div>
-
-            <div id="audio-settings" class="audio-settings hidden">
-                <div class="audio-settings-title">AUDIO SETTINGS</div>
-
-                <div class="audio-setting-row">
-                    <label for="song-volume">🎵 Song Volume</label>
-                    <input type="range" id="song-volume" min="0" max="100" value="70" step="1">
-                    <span id="song-volume-value">70%</span>
-                </div>
-
-                <div class="audio-setting-row">
-                    <label for="effect-volume">🥁 Effect Volume</label>
-                    <input type="range" id="effect-volume" min="0" max="100" value="70" step="1">
-                    <span id="effect-volume-value">70%</span>
-                </div>
-
-                <div class="audio-setting-row">
-                    <label for="announcer-volume">🗣️ Announcer Volume</label>
-                    <input type="range" id="announcer-volume" min="0" max="100" value="100" step="1">
-                    <span id="announcer-volume-value">100%</span>
-                </div>
             </div>
         </header>
 
@@ -88,6 +64,40 @@
                     <span class="key-hint"><kbd>D</kbd> <kbd>K</kbd> = Cycle Difficulty</span>
                     <span class="key-hint"><kbd>F</kbd> <kbd>J</kbd> = Start Song</span>
                     <span class="key-hint"><kbd>ESC</kbd> = Back</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════ AUDIO SETTINGS MODAL ═══════ -->
+        <div id="audio-settings-modal" class="modal-overlay hidden">
+            <div class="audio-settings-dialog">
+                <div class="dialog-header">
+                    <div class="dialog-label">AUDIO SETTINGS</div>
+                    <h2 class="dialog-title">Volume</h2>
+                    <div class="dialog-subtitle">Adjust each sound category independently.</div>
+                </div>
+
+                <div class="audio-settings-list">
+                    <label class="audio-setting-row" for="song-volume">
+                        <span class="audio-setting-name">🎵 Song Volume</span>
+                        <input type="range" id="song-volume" min="0" max="100" value="70" step="1">
+                        <span id="song-volume-value" class="audio-setting-value">70%</span>
+                    </label>
+                    <label class="audio-setting-row" for="effect-volume">
+                        <span class="audio-setting-name">🥁 Effect Volume</span>
+                        <input type="range" id="effect-volume" min="0" max="100" value="50" step="1">
+                        <span id="effect-volume-value" class="audio-setting-value">50%</span>
+                    </label>
+                    <label class="audio-setting-row" for="announcer-volume">
+                        <span class="audio-setting-name">🗣️ Announcer Volume</span>
+                        <input type="range" id="announcer-volume" min="0" max="100" value="70" step="1">
+                        <span id="announcer-volume-value" class="audio-setting-value">70%</span>
+                    </label>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn-folder audio-settings-close" id="btn-close-audio-settings" type="button">Close</button>
+                    <span class="key-hint"><kbd>ESC</kbd> = Close</span>
                 </div>
             </div>
         </div>
