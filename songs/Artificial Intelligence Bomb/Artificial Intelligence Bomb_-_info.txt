@@ -1,0 +1,7 @@
+Title:       Artificial Intelligence Bomb
+Artist(s):   narutoCharter(s):  Megi
+Difficulty:  3/5/7/7/10
+Genre:       バラエティ (Variety)
+BPM:         148.0
+TJADB ID:    10347
+Last Update: 2021-12-18
