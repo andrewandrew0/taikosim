@@ -57,7 +57,7 @@ class SoundManager {
         }
     }
 
-    play(name, volume = 0.9) {
+    play(name, volume = 0.5) {
         if (this.ctx && this.buffers[name]) {
             if (this.ctx.state === 'suspended') {
                 this.ctx.resume();
@@ -114,7 +114,7 @@ class SoundManager {
                 source.playbackRate.value = pitchRates[variant % pitchRates.length] || 1.0;
 
                 const gainNode = this.ctx.createGain();
-                gainNode.gain.value = volume; // pleasant, a bit quieter
+                gainNode.gain.value = 0.05; // pleasant, a bit quieter
                 source.connect(gainNode);
                 gainNode.connect(this.ctx.destination);
                 source.start(0);
