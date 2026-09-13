@@ -94,6 +94,58 @@ body {
     box-shadow: 0 4px 15px rgba(139, 233, 253, 0.2);
 }
 
+
+/* Audio Settings */
+.audio-settings {
+    position: absolute;
+    top: 88px;
+    right: 28px;
+    width: 330px;
+    padding: 18px 20px;
+    background: rgba(20, 14, 34, 0.97);
+    border: 2px solid rgba(255, 204, 0, 0.55);
+    border-radius: 16px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+    z-index: 100;
+    backdrop-filter: blur(12px);
+}
+
+.audio-settings-title {
+    color: #ffcc00;
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-align: center;
+    margin-bottom: 14px;
+}
+
+.audio-setting-row {
+    display: grid;
+    grid-template-columns: 1fr 105px 42px;
+    align-items: center;
+    gap: 10px;
+    margin: 12px 0;
+}
+
+.audio-setting-row label {
+    color: #f8f8f2;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.audio-setting-row input[type="range"] {
+    width: 105px;
+    accent-color: #ffcc00;
+    cursor: pointer;
+}
+
+.audio-setting-row span {
+    color: #ffcc00;
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-align: right;
+}
+
 /* Hero Panel (Active song details above carousel) */
 .song-hero {
     text-align: center;
