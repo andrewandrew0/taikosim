@@ -672,7 +672,7 @@ class Game {
             }
 
             // Large fat horn players popping into the crowd and making loud horn noises!
-            if (this.combo > 0 && (this.combo % 10 === 0 || (this.combo >= 6 && now - this.lastHornPlayerTime > 3600))) {
+            if (this.combo > 0 && (this.combo % 30 === 0 || (this.combo >= 6 && now - this.lastHornPlayerTime > 10000))) {
                 this._spawnHornPlayer(now);
             }
         } else if (diff <= this.OK_WINDOW) {
