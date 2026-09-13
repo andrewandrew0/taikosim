@@ -169,7 +169,7 @@ class Game {
     async start() {
         this._updateLayout();
         this.audio = new Audio(this.audioUrl);
-        this.audio.volume = 0.7;
+        this.audio.volume = 0.4;
 
         await new Promise((resolve, reject) => {
             this.audio.addEventListener('canplaythrough', resolve, { once: true });
@@ -3565,7 +3565,7 @@ class Game {
             if (isLeaping && leapU >= 0.45 && !hp.blasted) {
                 hp.blasted = true;
                 if (window.soundManager) {
-                    window.soundManager.playHorn(hp.variant, 0.45);
+                    window.soundManager.playHorn(hp.variant, 0.15);
                 }
                 for (let k = 0; k < 4; k++) {
                     hp.shockwaves.push({ birth: now + k * 70, duration: 460 });
