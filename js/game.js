@@ -169,7 +169,7 @@ class Game {
     async start() {
         this._updateLayout();
         this.audio = new Audio(this.audioUrl);
-        this.audio.volume = 0.4;
+        this.audio.volume = Math.max(0, Math.min(1, this.options.volume ?? 0.7));
 
         await new Promise((resolve, reject) => {
             this.audio.addEventListener('canplaythrough', resolve, { once: true });
@@ -3928,50 +3928,10 @@ class Game {
             duration: 2600
         };
 
-        // Voice speech synthesis via Web Speech API (High cute anime voice) with custom Gain Boost
-        if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-            try {
-                window.speechSynthesis.cancel();
-                
-                // 1. Initialize Web Audio Context if not already done
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                const audioCtx = new AudioContext();
-                
-                // 2. Create the Gain node to boost volume past 1.0
-                const gainNode = audioCtx.createGain();
-                gainNode.gain.value = 6; // 2.5 = 250% volume booster (Adjust as needed)
-                
-                // 3. Set up the standard Utterance properties
-                const utterance = new SpeechSynthesisUtterance(`${combo}コンボ`);
-                utterance.lang = 'ja-JP';
-                utterance.pitch = 1.75;
-                utterance.volume = 1; // Keep native engine at max, gainNode handles the over-amplification
-                utterance.rate = 1;
-
-                const voices = window.speechSynthesis.getVoices();
-                if (voices && voices.length > 0) {
-                    const jaVoice = voices.find(v => v.lang && (v.lang === 'ja-JP' || v.lang === 'ja_JP' || v.lang.startsWith('ja')));
-                    if (jaVoice) utterance.voice = jaVoice;
-                }
-
-                // 4. Capture browser speech stream into Web Audio API destination
-                // Note: Modern browsers require a user gesture (like a click) to resume the AudioContext
-                if (audioCtx.state === 'suspended') {
-                    audioCtx.resume();
-                }
-
-                // Create a media stream destination to route the synthesis into the audio node graph
-                const destination = audioCtx.createMediaStreamDestination();
-                gainNode.connect(audioCtx.destination);
-                
-                // fallback system connection while routing is active
-                // If your browser version does not support routing speech directly via media streams,
-                // it will play back via standard hardware channels at max system volume.
-                window.speechSynthesis.speak(utterance);
-                
-            } catch (e) {
-                // Speech synthesis failure non-fatal
-            }
+        // Use the supplied authentic announcer WAV instead of speechSynthesis.
+        // This gives the announcer its own Web Audio volume control.
+        if (window.soundManager) {
+            window.soundManager.playCombo(combo);
         }
     }
 
