@@ -17,20 +17,13 @@ class App {
         this.game = null;
         this.isStatic = false;
 
-        // Audio settings (persisted between sessions).
-        this.songVolume = this._readVolume('songVolume', 0.7);
-        this.effectVolume = this._readVolume('effectVolume', 0.7);
-        this.announcerVolume = this._readVolume('announcerVolume', 1.0);
-
-        // DOM elements
-        this.menuScreen = document.getElementById('menu-screen');
-        this.gameScreen = document.getElementById('game-screen');
-        this.canvas = document.getElementById('game-canvas');
-        this.loadingOverlay = document.getElementById('loading-overlay');
-
-        // Audio settings controls.
-        this.settingsPanel = document.getElementById('audio-settings');
-        this.settingsButton = document.getElementById('btn-settings');
+        // Independent audio settings, persisted between sessions.
+        this.songVolume = this._loadVolume('songVolume', 0.7);
+        this.effectVolume = this._loadVolume('effectVolume', 0.5);
+        this.announcerVolume = this._loadVolume('announcerVolume', 0.7);
+        this.audioSettingsModal = document.getElementById('audio-settings-modal');
+        this.btnAudioSettings = document.getElementById('btn-audio-settings');
+        this.btnCloseAudioSettings = document.getElementById('btn-close-audio-settings');
         this.songVolumeSlider = document.getElementById('song-volume');
         this.effectVolumeSlider = document.getElementById('effect-volume');
         this.announcerVolumeSlider = document.getElementById('announcer-volume');
@@ -38,7 +31,11 @@ class App {
         this.effectVolumeValue = document.getElementById('effect-volume-value');
         this.announcerVolumeValue = document.getElementById('announcer-volume-value');
 
-        this._setupAudioSettings();
+        // DOM elements
+        this.menuScreen = document.getElementById('menu-screen');
+        this.gameScreen = document.getElementById('game-screen');
+        this.canvas = document.getElementById('game-canvas');
+        this.loadingOverlay = document.getElementById('loading-overlay');
 
         // Carousel & Hero elements
         this.carousel = document.getElementById('song-carousel');
@@ -63,19 +60,6 @@ class App {
         // Keyboard navigation for menu
         document.addEventListener('keydown', (e) => this._onKeyDown(e));
 
-        // Title Screen.wav is the main-menu sound. It is triggered once after
-        // the first user interaction so browser autoplay rules are respected.
-        this._titleSoundPlayed = false;
-        const playTitleOnce = () => {
-            if (this._titleSoundPlayed || !window.soundManager) return;
-            this._titleSoundPlayed = true;
-            window.soundManager.playTitleScreen();
-            window.removeEventListener('pointerdown', playTitleOnce);
-            window.removeEventListener('keydown', playTitleOnce);
-        };
-        window.addEventListener('pointerdown', playTitleOnce);
-        window.addEventListener('keydown', playTitleOnce);
-
         // Arrow button clicks
         if (this.btnPrev) this.btnPrev.addEventListener('click', () => this._changeSongSelection(-1));
         if (this.btnNext) this.btnNext.addEventListener('click', () => this._changeSongSelection(1));
@@ -84,83 +68,110 @@ class App {
         const btnRefresh = document.getElementById('btn-refresh');
         if (btnRefresh) btnRefresh.addEventListener('click', () => this.refreshSongs());
 
-        if (this.settingsButton) {
-            this.settingsButton.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this._toggleAudioSettings();
-            });
-        }
-
-        document.addEventListener('click', (e) => {
-            if (this.settingsPanel && !this.settingsPanel.contains(e.target) &&
-                e.target !== this.settingsButton) {
-                this.settingsPanel.classList.add('hidden');
-            }
-        });
+        this._setupAudioSettings();
+        this._setupTitleScreenAudio();
     }
 
-    _readVolume(key, fallback) {
-        const raw = localStorage.getItem(key);
-        const value = Number(raw);
-        return Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : fallback;
+    _loadVolume(key, fallback) {
+        const stored = Number(localStorage.getItem(key));
+        return Number.isFinite(stored) ? Math.max(0, Math.min(1, stored)) : fallback;
     }
 
     _setupAudioSettings() {
-        const bindSlider = (slider, valueEl, key, initial, setter) => {
+        const setup = (slider, valueEl, key, setter) => {
             if (!slider) return;
-            slider.value = Math.round(initial * 100);
+            slider.value = Math.round(this[key] * 100);
             if (valueEl) valueEl.textContent = `${slider.value}%`;
-
             slider.addEventListener('input', () => {
-                const value = Number(slider.value) / 100;
-                localStorage.setItem(key, String(value));
+                this[key] = Number(slider.value) / 100;
+                localStorage.setItem(key, String(this[key]));
                 if (valueEl) valueEl.textContent = `${slider.value}%`;
-                setter(value);
+                if (window.soundManager && setter) setter.call(window.soundManager, this[key]);
+                if (key === 'songVolume' && this.game && this.game.audio) this.game.audio.volume = this[key];
             });
         };
 
-        bindSlider(
-            this.songVolumeSlider, this.songVolumeValue,
-            'songVolume', this.songVolume,
-            (value) => {
-                this.songVolume = value;
-                if (this.game && this.game.audio) this.game.audio.volume = value;
-            }
-        );
-
-        bindSlider(
-            this.effectVolumeSlider, this.effectVolumeValue,
-            'effectVolume', this.effectVolume,
-            (value) => {
-                this.effectVolume = value;
-                if (window.soundManager) window.soundManager.setEffectVolume(value);
-            }
-        );
-
-        bindSlider(
-            this.announcerVolumeSlider, this.announcerVolumeValue,
-            'announcerVolume', this.announcerVolume,
-            (value) => {
-                this.announcerVolume = value;
-                if (window.soundManager) window.soundManager.setAnnouncerVolume(value);
-            }
-        );
+        setup(this.songVolumeSlider, this.songVolumeValue, 'songVolume', null);
+        setup(this.effectVolumeSlider, this.effectVolumeValue, 'effectVolume', window.soundManager && window.soundManager.setEffectVolume);
+        setup(this.announcerVolumeSlider, this.announcerVolumeValue, 'announcerVolume', window.soundManager && window.soundManager.setAnnouncerVolume);
 
         if (window.soundManager) {
             window.soundManager.setEffectVolume(this.effectVolume);
             window.soundManager.setAnnouncerVolume(this.announcerVolume);
         }
+
+        if (this.btnAudioSettings) {
+            this.btnAudioSettings.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this._openAudioSettings();
+            });
+        }
+        if (this.btnCloseAudioSettings) {
+            this.btnCloseAudioSettings.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this._closeAudioSettings();
+            });
+        }
+        if (this.audioSettingsModal) {
+            this.audioSettingsModal.addEventListener('click', (e) => {
+                if (e.target === this.audioSettingsModal) this._closeAudioSettings();
+            });
+        }
     }
 
-    _toggleAudioSettings() {
-        if (this.settingsPanel) {
-            this.settingsPanel.classList.toggle('hidden');
-        }
+    _openAudioSettings() {
+        if (!this.audioSettingsModal) return;
+        this.audioSettingsModal.classList.remove('hidden');
+    }
+
+    _closeAudioSettings() {
+        if (!this.audioSettingsModal) return;
+        this.audioSettingsModal.classList.add('hidden');
+    }
+
+    _setupTitleScreenAudio() {
+        this._titleSoundStarted = false;
+        const tryPlay = async () => {
+            if (this._titleSoundStarted || !window.soundManager) return;
+
+            // Web Audio autoplay is allowed only after a user gesture in many browsers.
+            if (window.soundManager.ctx && window.soundManager.ctx.state === 'suspended') {
+                try { await window.soundManager.ctx.resume(); } catch (_) { return; }
+            }
+            if (window.soundManager.ctx && window.soundManager.ctx.state !== 'running') return;
+
+            this._titleSoundStarted = true;
+            window.soundManager.playTitleScreen();
+            window.removeEventListener('pointerdown', tryPlay);
+            window.removeEventListener('keydown', tryPlay);
+        };
+
+        // Attempt immediately. If autoplay is blocked, the first user interaction
+        // anywhere on the menu will start the title sound.
+        window.soundManager?.ready?.then(() => {
+            if (!this._titleSoundStarted) window.setTimeout(tryPlay, 50);
+        });
+        window.addEventListener('pointerdown', tryPlay, { once: false });
+        window.addEventListener('keydown', tryPlay, { once: false });
     }
 
     async init() {
         this._showLoading('Loading songs...');
         this.isStatic = false;
+
+        // Independent audio settings, persisted between sessions.
+        this.songVolume = this._loadVolume('songVolume', 0.7);
+        this.effectVolume = this._loadVolume('effectVolume', 0.5);
+        this.announcerVolume = this._loadVolume('announcerVolume', 0.7);
+        this.audioSettingsModal = document.getElementById('audio-settings-modal');
+        this.btnAudioSettings = document.getElementById('btn-audio-settings');
+        this.btnCloseAudioSettings = document.getElementById('btn-close-audio-settings');
+        this.songVolumeSlider = document.getElementById('song-volume');
+        this.effectVolumeSlider = document.getElementById('effect-volume');
+        this.announcerVolumeSlider = document.getElementById('announcer-volume');
+        this.songVolumeValue = document.getElementById('song-volume-value');
+        this.effectVolumeValue = document.getElementById('effect-volume-value');
+        this.announcerVolumeValue = document.getElementById('announcer-volume-value');
 
         // GitHub Pages is a static host, so it cannot list the contents of
         // /songs/ like a normal server. Use the GitHub repository tree API
@@ -358,6 +369,14 @@ class App {
         if (!this.gameScreen.classList.contains('hidden')) return;
 
         const key = e.key.toLowerCase();
+
+        if (this.audioSettingsModal && !this.audioSettingsModal.classList.contains('hidden')) {
+            if (key === 'escape') {
+                e.preventDefault();
+                this._closeAudioSettings();
+            }
+            return;
+        }
 
         // Hitsounds for menu: D & K play normal-hitclap (Ka), F & J play normal-hitnormal (Don)
         if (key === 'd' || key === 'k') {
@@ -728,12 +747,12 @@ class App {
             this.game = new Game(this.canvas, {
                 notes: parsedCourse.notes,
                 audioUrl: audioUrl,
-                volume: this.songVolume,
                 offset: parsed.header.offset,
                 bpm: parsed.header.bpm || song.bpm || 150,
                 title: song.title,
                 courseName: course.name,
                 level: course.level,
+                songVolume: this.songVolume,
                 onEnd: (results) => this._onGameEnd(results),
                 onBack: () => this._returnToMenu(),
             });
@@ -762,7 +781,6 @@ class App {
         this.menuScreen.classList.remove('hidden');
         this.mode = 'song_select';
         this._updateCarouselSelection();
-        if (window.soundManager) window.soundManager.playTitleScreen();
     }
 
     _resizeCanvas() {
