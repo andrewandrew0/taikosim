@@ -1,9 +1,0 @@
-Title:       memoryfactory.lzh
-Artist(s):   Frums
-From:        Arcaea
-Charter(s):  bol
-Difficulty:  2/2/5/8/*
-Genre:       ゲームミュージック (Game Music)
-BPM:         100.0
-TJADB ID:    10056
-Last Update: 2021-07-01

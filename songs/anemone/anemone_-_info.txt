@@ -1,9 +1,0 @@
-Title:       anemone
-Artist(s):   Qrispy Joybox & S-C-U
-From:        REFLEC BEAT
-Charter(s):  Megi
-Difficulty:  2/5/6/7/9
-Genre:       ゲームミュージック (Game Music)
-BPM:         200.0
-TJADB ID:    10310
-Last Update: 2021-10-10

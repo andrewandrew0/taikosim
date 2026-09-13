@@ -1,7 +1,0 @@
-Title:       Blue Zenith
-Artist(s):   xiCharter(s):  Megi
-Difficulty:  5/7/8/10/11
-Genre:       バラエティ (Variety)
-BPM:         200.0
-TJADB ID:    10335
-Last Update: 2021-12-28

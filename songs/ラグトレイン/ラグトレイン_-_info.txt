@@ -1,7 +1,0 @@
-Title:       ラグトレイン (Lagtrain)
-Artist(s):   稲葉曇 (INABAKUMORI) & 歌愛ユキ (Kaai Yuki)Charter(s):  Megi
-Difficulty:  2/3/4/5/6
-Genre:       ボーカロイド曲 (Vocaloid)
-BPM:         147.0
-TJADB ID:    10362
-Last Update: 2021-10-30

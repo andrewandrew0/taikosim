@@ -1,9 +1,0 @@
-Title:       crystallized
-Artist(s):   かめりあ (Camellia)
-From:        Lanota
-Charter(s):  bol
-Difficulty:  5/7/8/10/*
-Genre:       ゲームミュージック (Game Music)
-BPM:         174.0
-TJADB ID:    10198
-Last Update: 2021-09-19
